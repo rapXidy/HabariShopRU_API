@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using Dapper;
+using System.Data;
 
 namespace HabariShopRU.API.BusinessLogic.Extensions
 {
@@ -18,12 +19,14 @@ namespace HabariShopRU.API.BusinessLogic.Extensions
             string createTableQuery = @"
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Customers' and xtype='U')
             CREATE TABLE Customers (
-                Id INT PRIMARY KEY IDENTITY,
-                Name NVARCHAR(100) NOT NULL,
-                Email NVARCHAR(100) NOT NULL
+	            [Id] [uniqueidentifier] PRIMARY KEY IDENTITY NOT NULL,
+	            [Name] [nvarchar](max) NULL,
+	            [Location] [nvarchar](max) NULL,
+	            [CustomerType] [nvarchar](50) NULL,
+	            [DateCreated] [datetime] NULL,
             );";
 
-            dbConnection.Execute(createTableQuery);
+            await dbConnection.ExecuteAsync(createTableQuery);
 
             await _next(context);
         }
